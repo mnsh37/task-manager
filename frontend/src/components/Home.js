@@ -1,11 +1,11 @@
 // src/components/Home.js
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 function Home({ user }) {
-  const [taskTitle, setTaskTitle] = useState('');
-  const [taskDescription, setTaskDescription] = useState('');
-  const [taskPriority, setTaskPriority] = useState('Medium');
-  const [taskLabel, setTaskLabel] = useState('Personal');
+  const [taskTitle, setTaskTitle] = useState("");
+  const [taskDescription, setTaskDescription] = useState("");
+  const [taskPriority, setTaskPriority] = useState("Medium");
+  const [taskLabel, setTaskLabel] = useState("Personal");
   const [tasks, setTasks] = useState([]);
 
   const addTask = () => {
@@ -19,10 +19,10 @@ function Home({ user }) {
     };
     setTasks([...tasks, newTask]);
     // Reset input fields
-    setTaskTitle('');
-    setTaskDescription('');
-    setTaskPriority('Medium');
-    setTaskLabel('Personal');
+    setTaskTitle("");
+    setTaskDescription("");
+    setTaskPriority("Medium");
+    setTaskLabel("Personal");
   };
 
   const deleteTask = (index) => {
@@ -77,7 +77,8 @@ function Home({ user }) {
         {tasks.map((task, index) => (
           <li key={index}>
             <h3>
-              {index + 1}. {task.title} (Priority: {task.priority}, Label: {task.label})
+              {index + 1}. {task.title} (Priority: {task.priority}, Label:{" "}
+              {task.label})
             </h3>
             <p>{task.description}</p>
             <p>Created At: {new Date(task.createdAt).toLocaleString()}</p>
