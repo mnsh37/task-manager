@@ -7,9 +7,7 @@ import Home from "./components/Home";
 function App({ signOut, user }) {
   return (
     <div>
-      <h1>Welcome, {user.signInDetails.loginId}!</h1>
-      <button onClick={signOut}>Sign out</button>
-      <Home user={user} />
+      <Home user={user} signOut={signOut} /> {/* Pass signOut as a prop */}
     </div>
   );
 }
