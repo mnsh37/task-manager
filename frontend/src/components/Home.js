@@ -21,7 +21,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CheckIcon from "@mui/icons-material/Check";
 import { useNavigate } from "react-router-dom";
 
-const Home = ({ user, onLogout }) => {
+const Home = ({ user, signOut }) => {
+  // Use signOut instead of onLogout
   const [tasks, setTasks] = useState([]);
   const [taskTitle, setTaskTitle] = useState("");
   const [taskDescription, setTaskDescription] = useState("");
@@ -76,7 +77,7 @@ const Home = ({ user, onLogout }) => {
 
   // Handle Logout
   const handleLogout = () => {
-    onLogout();
+    signOut(); // Call signOut instead of onLogout
     navigate("/login");
   };
 
@@ -288,15 +289,15 @@ const Home = ({ user, onLogout }) => {
                       variant="contained"
                       color="primary"
                       onClick={() => completeTask(task.id)}
-                      startIcon={<CheckIcon />}
                       disabled={task.completed}
-                      style={{ marginRight: "10px" }}
+                      startIcon={<CheckIcon />}
                     >
-                      {task.completed ? "Completed" : "Mark as Completed"}
+                      Complete
                     </Button>
                     <IconButton
                       color="secondary"
                       onClick={() => deleteTask(task.id)}
+                      style={{ marginLeft: "10px" }}
                     >
                       <DeleteIcon />
                     </IconButton>
