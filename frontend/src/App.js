@@ -1,5 +1,6 @@
 // src/App.js
 import React from "react";
+import "./App.css";
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 import Home from "./components/Home";

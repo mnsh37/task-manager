@@ -19,10 +19,10 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CheckIcon from "@mui/icons-material/Check";
+import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate } from "react-router-dom";
 
 const Home = ({ user, signOut }) => {
-  // Use signOut instead of onLogout
   const [tasks, setTasks] = useState([]);
   const [taskTitle, setTaskTitle] = useState("");
   const [taskDescription, setTaskDescription] = useState("");
@@ -31,6 +31,7 @@ const Home = ({ user, signOut }) => {
   const [filterPriority, setFilterPriority] = useState("All");
   const [filterLabel, setFilterLabel] = useState("All");
   const [filterCompletion, setFilterCompletion] = useState("All");
+  const [editingTaskId, setEditingTaskId] = useState(null);
 
   const navigate = useNavigate();
 
@@ -49,10 +50,43 @@ const Home = ({ user, signOut }) => {
       completed: false,
     };
     setTasks([...tasks, newTask]);
+    resetForm();
+  };
+
+  // Reset form fields
+  const resetForm = () => {
     setTaskTitle("");
     setTaskDescription("");
     setTaskPriority("Low");
     setTaskLabel("Personal");
+    setEditingTaskId(null);
+  };
+
+  // Edit Task function
+  const startEditing = (task) => {
+    setEditingTaskId(task.id);
+    setTaskTitle(task.title);
+    setTaskDescription(task.description);
+    setTaskPriority(task.priority);
+    setTaskLabel(task.label);
+  };
+
+  // Update Task function
+  const updateTask = () => {
+    setTasks(
+      tasks.map((task) =>
+        task.id === editingTaskId
+          ? {
+              ...task,
+              title: taskTitle,
+              description: taskDescription,
+              priority: taskPriority,
+              label: taskLabel,
+            }
+          : task
+      )
+    );
+    resetForm();
   };
 
   // Complete Task function
@@ -62,8 +96,8 @@ const Home = ({ user, signOut }) => {
         task.id === id
           ? {
               ...task,
-              completed: true,
-              completedAt: new Date().toLocaleString(),
+              completed: true, // Mark as completed
+              completedAt: new Date().toLocaleString(), // Set completion time
             }
           : task
       )
@@ -77,7 +111,7 @@ const Home = ({ user, signOut }) => {
 
   // Handle Logout
   const handleLogout = () => {
-    signOut(); // Call signOut instead of onLogout
+    signOut();
     navigate("/login");
   };
 
@@ -122,7 +156,9 @@ const Home = ({ user, signOut }) => {
         <Grid item xs={12} md={6}>
           <Card>
             <CardContent>
-              <Typography variant="h5">Add New Task</Typography>
+              <Typography variant="h5">
+                {editingTaskId ? "Edit Task" : "Add New Task"}
+              </Typography>
               <TextField
                 label="Task Title"
                 fullWidth
@@ -167,11 +203,11 @@ const Home = ({ user, signOut }) => {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={addTask}
+                onClick={editingTaskId ? updateTask : addTask}
                 startIcon={<AddIcon />}
                 fullWidth
               >
-                Add Task
+                {editingTaskId ? "Update Task" : "Add Task"}
               </Button>
             </CardContent>
           </Card>
@@ -179,132 +215,136 @@ const Home = ({ user, signOut }) => {
 
         {/* Task Filters Section */}
         <Grid item xs={12} md={6}>
-          <Typography variant="h5" gutterBottom>
-            Filters
-          </Typography>
-          <Grid container spacing={2} style={{ marginBottom: "20px" }}>
-            <Grid item xs={4}>
-              <FormControl fullWidth>
-                <InputLabel>Priority</InputLabel>
-                <Select
-                  value={filterPriority}
-                  onChange={(e) => setFilterPriority(e.target.value)}
-                >
-                  <MenuItem value="All">All</MenuItem>
-                  <MenuItem value="Low">Low</MenuItem>
-                  <MenuItem value="Medium">Medium</MenuItem>
-                  <MenuItem value="High">High</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={4}>
-              <FormControl fullWidth>
-                <InputLabel>Label</InputLabel>
-                <Select
-                  value={filterLabel}
-                  onChange={(e) => setFilterLabel(e.target.value)}
-                >
-                  <MenuItem value="All">All</MenuItem>
-                  <MenuItem value="Personal">Personal</MenuItem>
-                  <MenuItem value="Work">Work</MenuItem>
-                  <MenuItem value="Study">Study</MenuItem>
-                  <MenuItem value="Others">Others</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={4}>
-              <FormControl fullWidth>
-                <InputLabel>Status</InputLabel>
-                <Select
-                  value={filterCompletion}
-                  onChange={(e) => setFilterCompletion(e.target.value)}
-                >
-                  <MenuItem value="All">All</MenuItem>
-                  <MenuItem value="Completed">Completed</MenuItem>
-                  <MenuItem value="Incomplete">Incomplete</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-          </Grid>
-
-          {/* Reset Filter Button */}
-          <Button
-            variant="outlined"
-            color="secondary"
-            onClick={resetFilters}
-            fullWidth
-            style={{ marginBottom: "20px" }}
-          >
-            Reset Filters
-          </Button>
+          <Card>
+            <CardContent>
+              <Typography variant="h5" gutterBottom>
+                Filters
+              </Typography>
+              <Grid container spacing={2} style={{ marginBottom: "20px" }}>
+                <Grid item xs={4}>
+                  <FormControl fullWidth>
+                    <InputLabel>Priority</InputLabel>
+                    <Select
+                      value={filterPriority}
+                      onChange={(e) => setFilterPriority(e.target.value)}
+                    >
+                      <MenuItem value="All">All</MenuItem>
+                      <MenuItem value="Low">Low</MenuItem>
+                      <MenuItem value="Medium">Medium</MenuItem>
+                      <MenuItem value="High">High</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={4}>
+                  <FormControl fullWidth>
+                    <InputLabel>Label</InputLabel>
+                    <Select
+                      value={filterLabel}
+                      onChange={(e) => setFilterLabel(e.target.value)}
+                    >
+                      <MenuItem value="All">All</MenuItem>
+                      <MenuItem value="Personal">Personal</MenuItem>
+                      <MenuItem value="Work">Work</MenuItem>
+                      <MenuItem value="Study">Study</MenuItem>
+                      <MenuItem value="Others">Others</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={4}>
+                  <FormControl fullWidth>
+                    <InputLabel>Status</InputLabel>
+                    <Select
+                      value={filterCompletion}
+                      onChange={(e) => setFilterCompletion(e.target.value)}
+                    >
+                      <MenuItem value="All">All</MenuItem>
+                      <MenuItem value="Completed">Completed</MenuItem>
+                      <MenuItem value="Incomplete">Incomplete</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+              </Grid>
+              {/* Reset Filter Button */}
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={resetFilters}
+                startIcon={<AddIcon />} // You can choose to add an icon if desired
+                fullWidth
+                style={{ marginBottom: "20px" }}
+              >
+                Reset Filters
+              </Button>
+            </CardContent>
+          </Card>
 
           {/* Display Filtered Tasks */}
-          <Typography variant="h5" gutterBottom>
+          <Typography variant="h5" gutterBottom sx={{ mt: 3 }}>
             Your Tasks
           </Typography>
           {filteredTasks.length === 0 ? (
-            <Typography>No tasks match the current filter!</Typography>
+            <Typography>No tasks available.</Typography>
           ) : (
-            filteredTasks.map((task) => (
-              <Card key={task.id} style={{ marginBottom: "10px" }}>
-                <CardContent>
-                  <Typography variant="h6">
-                    {task.id}. {task.title}
-                  </Typography>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <Chip
-                      label={task.priority}
-                      style={{
-                        marginRight: "10px",
-                        backgroundColor:
-                          task.priority === "High"
-                            ? "#f44336"
-                            : task.priority === "Medium"
-                            ? "#ff9800"
-                            : "#4caf50",
-                        color: "#fff",
-                      }}
-                    />
-                    <Chip
-                      label={task.label}
-                      style={{
-                        backgroundColor: "#2196f3",
-                        color: "#fff",
-                      }}
-                    />
-                  </div>
-                  <Typography variant="body2" style={{ marginTop: "5px" }}>
-                    {task.description}
-                  </Typography>
-                  <Typography variant="caption">
-                    Added on: {task.addedAt} &nbsp;
-                  </Typography>
-                  {task.completed && (
-                    <Typography variant="caption" color="primary">
-                      Completed on: {task.completedAt}
+            filteredTasks.map(
+              (
+                task,
+                index // Add index here
+              ) => (
+                <Card
+                  key={task.id}
+                  style={{
+                    marginBottom: "15px",
+                    background: task.completed ? "#e0ffe0" : "#fff",
+                  }}
+                >
+                  <CardContent>
+                    <Typography variant="h6">
+                      {index + 1}. {task.title} {/* Numbering starts from 1 */}
+                      <Chip
+                        label={task.priority}
+                        color="primary"
+                        style={{ marginLeft: "10px" }}
+                      />
+                      <Chip
+                        label={task.label}
+                        color="default"
+                        style={{ marginLeft: "10px" }}
+                      />
                     </Typography>
-                  )}
-                  <div style={{ marginTop: "10px" }}>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={() => completeTask(task.id)}
-                      disabled={task.completed}
-                      startIcon={<CheckIcon />}
+                    <Typography variant="body2" style={{ marginTop: "10px" }}>
+                      {task.description}
+                    </Typography>
+                    <Typography variant="caption" color="textSecondary">
+                      Added at: {task.addedAt}{" "}
+                      {task.completed && `| Completed at: ${task.completedAt}`}
+                    </Typography>
+                    <div
+                      style={{
+                        marginTop: "10px",
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
                     >
-                      Complete
-                    </Button>
-                    <IconButton
-                      color="secondary"
-                      onClick={() => deleteTask(task.id)}
-                      style={{ marginLeft: "10px" }}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
+                      <IconButton onClick={() => startEditing(task)}>
+                        <EditIcon />
+                      </IconButton>
+                      {task.completed ? (
+                        <Button variant="contained" color="success" disabled>
+                          Completed
+                        </Button>
+                      ) : (
+                        <IconButton onClick={() => completeTask(task.id)}>
+                          <CheckIcon color="primary" />
+                        </IconButton>
+                      )}
+                      <IconButton onClick={() => deleteTask(task.id)}>
+                        <DeleteIcon color="error" />
+                      </IconButton>
+                    </div>
+                  </CardContent>
+                </Card>
+              )
+            )
           )}
         </Grid>
       </Grid>
