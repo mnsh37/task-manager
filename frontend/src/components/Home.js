@@ -21,6 +21,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CheckIcon from "@mui/icons-material/Check";
 import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate } from "react-router-dom";
+// Importing uuid library
+import { v4 as uuidv4 } from "uuid";
 
 const Home = ({ user, signOut }) => {
   const [tasks, setTasks] = useState([]);
@@ -40,7 +42,7 @@ const Home = ({ user, signOut }) => {
     if (!taskTitle) return;
 
     const newTask = {
-      id: tasks.length + 1,
+      id: uuidv4(), // Using uuid to generate a unique ID
       title: taskTitle,
       description: taskDescription,
       priority: taskPriority,
@@ -136,7 +138,6 @@ const Home = ({ user, signOut }) => {
       return matchesPriority && matchesLabel && matchesCompletion;
     });
   }, [tasks, filterPriority, filterLabel, filterCompletion]);
-
 
   return (
     <Container>
