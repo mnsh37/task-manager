@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   AppBar,
   Toolbar,
@@ -123,17 +123,20 @@ const Home = ({ user, signOut }) => {
   };
 
   // Filter tasks based on filter criteria
-  const filteredTasks = tasks.filter((task) => {
-    const matchesPriority =
-      filterPriority === "All" || task.priority === filterPriority;
-    const matchesLabel = filterLabel === "All" || task.label === filterLabel;
-    const matchesCompletion =
-      filterCompletion === "All" ||
-      (filterCompletion === "Completed" && task.completed) ||
-      (filterCompletion === "Incomplete" && !task.completed);
+  const filteredTasks = useMemo(() => {
+    return tasks.filter((task) => {
+      const matchesPriority =
+        filterPriority === "All" || task.priority === filterPriority;
+      const matchesLabel = filterLabel === "All" || task.label === filterLabel;
+      const matchesCompletion =
+        filterCompletion === "All" ||
+        (filterCompletion === "Completed" && task.completed) ||
+        (filterCompletion === "Incomplete" && !task.completed);
 
-    return matchesPriority && matchesLabel && matchesCompletion;
-  });
+      return matchesPriority && matchesLabel && matchesCompletion;
+    });
+  }, [tasks, filterPriority, filterLabel, filterCompletion]);
+
 
   return (
     <Container>
